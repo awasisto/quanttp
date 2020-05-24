@@ -57,12 +57,6 @@ def api_randbytes():
         return Response(str(e), status=400, content_type='text/plain')
 
 
-@app.route('/api/reset')
-def api_reset():
-    qng_wrapper.reset()
-    return Response('OK', content_type='text/plain')
-
-
 @sockets.route('/ws')
 def ws(websocket):
     while not websocket.closed:
@@ -77,9 +71,6 @@ def ws(websocket):
                 websocket.send(str(qng_wrapper.randnormal()))
             elif split_message[0] == 'randbytes':
                 websocket.send(qng_wrapper.randbytes(int(split_message[1])))
-            elif split_message[0] == 'reset':
-                qng_wrapper.reset()
-                websocket.send('OK')
         except ValueError as e:
             websocket.close(code=1003, message=str(e))
         except Exception as e:

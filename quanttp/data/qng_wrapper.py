@@ -27,20 +27,33 @@ class QngWrapper:
         self.qng = win32com.client.Dispatch("QWQNG.QNG")
 
     def randint32(self):
-        self.qng.Clear()
-        return self.qng.RandInt32
+        try:
+            self.qng.Clear()
+            return self.qng.RandInt32
+        except:
+            self.qng.Reset()
+            return self.qng.RandInt32
 
     def randuniform(self):
-        self.qng.Clear()
-        return self.qng.RandUniform
+        try:
+            self.qng.Clear()
+            return self.qng.RandUniform
+        except:
+            self.qng.Reset()
+            return self.qng.RandUniform
 
     def randnormal(self):
-        self.qng.Clear()
-        return self.qng.RandNormal
+        try:
+            self.qng.Clear()
+            return self.qng.RandNormal
+        except:
+            self.qng.Reset()
+            return self.qng.RandNormal
 
     def randbytes(self, length):
-        self.qng.Clear()
-        return self.qng.RandBytes(length)
-
-    def reset(self):
-        self.qng.Reset()
+        try:
+            self.qng.Clear()
+            return self.qng.RandBytes(length)
+        except:
+            self.qng.Reset()
+            return self.qng.RandBytes(length)

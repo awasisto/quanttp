@@ -30,9 +30,6 @@ Usage Example
 	http://localhost:62456/api/randbytes?length=8
 	< ���E��s_�b����G�
 
-	http://localhost:62456/api/reset
-	< OK
-
 
 ### WebSocket API
 	
@@ -45,8 +42,6 @@ Usage Example
 	< -1.6120135370
 	> RANDBYTES 16
 	< �����9L).�!:���@Nh������d����_q�
-	> RESET
-	< OK
 
 License
 -------
