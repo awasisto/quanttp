@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import threading
+
 from flask import Flask, request, Response
 from flask_sockets import Sockets
 from gevent import pywsgi
@@ -59,22 +61,51 @@ def api_randbytes():
 
 @sockets.route('/ws')
 def ws(websocket):
+    subscribed = [False]
     while not websocket.closed:
-        try:
-            message = websocket.receive().strip().lower()
-            split_message = message.split(' ')
-            if split_message[0] == 'randint32':
-                websocket.send(str(qng_wrapper.randint32()))
-            elif split_message[0] == 'randuniform':
-                websocket.send(str(qng_wrapper.randuniform()))
-            elif split_message[0] == 'randnormal':
-                websocket.send(str(qng_wrapper.randnormal()))
-            elif split_message[0] == 'randbytes':
-                websocket.send(qng_wrapper.randbytes(int(split_message[1])))
-        except ValueError as e:
-            websocket.close(code=1003, message=str(e))
-        except Exception as e:
-            websocket.close(code=1011, message=str(e))
+        threading.Thread(target=handle_ws_message, args=(websocket.receive(), websocket, subscribed)).start()
+
+
+def handle_ws_message(message, websocket, subscribed):
+    try:
+        split_message = message.strip().lower().split()
+        if split_message[0] == 'randint32':
+            websocket.send(str(qng_wrapper.randint32()))
+        elif split_message[0] == 'randuniform':
+            websocket.send(str(qng_wrapper.randuniform()))
+        elif split_message[0] == 'randnormal':
+            websocket.send(str(qng_wrapper.randnormal()))
+        elif split_message[0] == 'randbytes':
+            length = int(split_message[1])
+            websocket.send(qng_wrapper.randbytes(length))
+        elif split_message[0] == 'subscribeint32':
+            if not subscribed[0]:
+                subscribed[0] = True
+                while subscribed[0] and not websocket.closed:
+                    websocket.send(str(qng_wrapper.randint32()))
+        elif split_message[0] == 'subscribeuniform':
+            if not subscribed[0]:
+                subscribed[0] = True
+                while subscribed[0] and not websocket.closed:
+                    websocket.send(str(qng_wrapper.randuniform()))
+        elif split_message[0] == 'subscribenormal':
+            if not subscribed[0]:
+                subscribed[0] = True
+                while subscribed[0] and not websocket.closed:
+                    websocket.send(str(qng_wrapper.randnormal()))
+        elif split_message[0] == 'subscribebytes':
+            chunk = int(split_message[1])
+            if not subscribed[0]:
+                subscribed[0] = True
+                while subscribed[0] and not websocket.closed:
+                    websocket.send(qng_wrapper.randbytes(chunk))
+        elif split_message[0] == 'unsubscribe':
+            subscribed[0] = False
+            websocket.send('UNSUBSCRIBED')
+    except (ValueError, BlockingIOError):
+        pass
+    except Exception as e:
+        websocket.close(code=1011, message=str(e))
 
 
 @app.errorhandler(Exception)

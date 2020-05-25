@@ -36,12 +36,48 @@ Usage Example
 	ws://localhost:62456/ws
 	> RANDINT32
 	< 585865374
+
 	> RANDUNIFORM
 	< 0.70137183786
+
 	> RANDNORMAL
 	< -1.6120135370
+
 	> RANDBYTES 16
 	< �����9L).�!:���@Nh������d����_q�
+
+	> SUBSCRIBEINT32
+	< 1361330636
+	< -604581511
+	< 1510923919
+	< ...
+	> UNSUBSCRIBE
+	< UNSUBSCRIBED
+
+	> SUBSCRIBEUNIFORM
+	< 0.54623951886
+	< 0.67567578799
+	< 0.09746421443
+	< ...
+	> UNSUBSCRIBE
+	< UNSUBSCRIBED
+
+	> SUBSCRIBENORMAL
+	< -1.6120135370
+	< 0.02943381135
+	< -0.9883458007
+	< ...
+	> UNSUBSCRIBE
+	< UNSUBSCRIBED
+
+	> SUBSCRIBEBYTES 8
+	< �����9L)
+	< .�!:���@
+	< Nh������
+	< d����_q�
+	< ...
+	> UNSUBSCRIBE
+	< UNSUBSCRIBED
 
 License
 -------
