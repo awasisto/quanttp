@@ -25,13 +25,14 @@ from flask_sockets import Sockets
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 
+from quanttp.data.qng_wrapper import QngWrapper
+from quanttp.data.qng_wrapper_mock import QngWrapperMock
+
+
 app = Flask(__name__)
 sockets = Sockets(app)
 
-from quanttp.data.qng_wrapper import QngWrapper
 qng_wrapper = QngWrapper()
-
-# from quanttp.data.qng_wrapper_mock import QngWrapperMock
 # qng_wrapper = QngWrapperMock()
 
 
@@ -72,46 +73,46 @@ def ws(websocket):
 
 def handle_ws_message(message, websocket, subscribed):
     try:
-        split_message = message.strip().lower().split()
-        if split_message[0] == 'randint32':
+        split_message = message.strip().upper().split()
+        if split_message[0] == 'RANDINT32':
             qng_wrapper.clear()
             websocket.send(str(qng_wrapper.randint32()))
-        elif split_message[0] == 'randuniform':
+        elif split_message[0] == 'RANDUNIFORM':
             qng_wrapper.clear()
             websocket.send(str(qng_wrapper.randuniform()))
-        elif split_message[0] == 'randnormal':
+        elif split_message[0] == 'RANDNORMAL':
             qng_wrapper.clear()
             websocket.send(str(qng_wrapper.randnormal()))
-        elif split_message[0] == 'randbytes':
+        elif split_message[0] == 'RANDBYTES':
             length = int(split_message[1])
             qng_wrapper.clear()
             websocket.send(qng_wrapper.randbytes(length))
-        elif split_message[0] == 'subscribeint32':
+        elif split_message[0] == 'SUBSCRIBEINT32':
             if not subscribed[0]:
                 subscribed[0] = True
                 qng_wrapper.clear()
                 while subscribed[0] and not websocket.closed:
                     websocket.send(str(qng_wrapper.randint32()))
-        elif split_message[0] == 'subscribeuniform':
+        elif split_message[0] == 'SUBSCRIBEUNIFORM':
             if not subscribed[0]:
                 subscribed[0] = True
                 qng_wrapper.clear()
                 while subscribed[0] and not websocket.closed:
                     websocket.send(str(qng_wrapper.randuniform()))
-        elif split_message[0] == 'subscribenormal':
+        elif split_message[0] == 'SUBSCRIBENORMAL':
             if not subscribed[0]:
                 subscribed[0] = True
                 qng_wrapper.clear()
                 while subscribed[0] and not websocket.closed:
                     websocket.send(str(qng_wrapper.randnormal()))
-        elif split_message[0] == 'subscribebytes':
+        elif split_message[0] == 'SUBSCRIBEBYTES':
             chunk = int(split_message[1])
             qng_wrapper.clear()
             if not subscribed[0]:
                 subscribed[0] = True
                 while subscribed[0] and not websocket.closed:
                     websocket.send(qng_wrapper.randbytes(chunk))
-        elif split_message[0] == 'unsubscribe':
+        elif split_message[0] == 'UNSUBSCRIBE':
             subscribed[0] = False
             websocket.send('UNSUBSCRIBED')
     except (ValueError, BlockingIOError):
