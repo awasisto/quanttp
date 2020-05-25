@@ -71,10 +71,9 @@ Usage Example
 	< UNSUBSCRIBED
 
 	> SUBSCRIBEBYTES 8
-	< �����9L)
-	< .�!:���@
-	< Nh������
-	< d����_q�
+	< �K����{�
+	< I]������
+	< ���.�t�U
 	< ...
 	> UNSUBSCRIBE
 	< UNSUBSCRIBED
