@@ -28,7 +28,6 @@ class QngWrapper:
 
     def randint32(self):
         try:
-            self.qng.Clear()
             return self.qng.RandInt32
         except:
             self.qng.Reset()
@@ -36,7 +35,6 @@ class QngWrapper:
 
     def randuniform(self):
         try:
-            self.qng.Clear()
             return self.qng.RandUniform
         except:
             self.qng.Reset()
@@ -44,7 +42,6 @@ class QngWrapper:
 
     def randnormal(self):
         try:
-            self.qng.Clear()
             return self.qng.RandNormal
         except:
             self.qng.Reset()
@@ -52,8 +49,10 @@ class QngWrapper:
 
     def randbytes(self, length):
         try:
-            self.qng.Clear()
             return self.qng.RandBytes(length)
         except:
             self.qng.Reset()
             return self.qng.RandBytes(length)
+
+    def clear(self):
+        self.qng.Clear()

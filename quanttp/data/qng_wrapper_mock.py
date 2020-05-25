@@ -35,3 +35,6 @@ class QngWrapperMock:
 
     def randbytes(self, length):
         return secrets.token_bytes(nbytes=length)
+
+    def clear(self):
+        pass
