@@ -49,10 +49,10 @@ class QngWrapper:
 
     def randbytes(self, length):
         try:
-            return self.qng.RandBytes(length)
+            return bytes(self.qng.RandBytes(length))
         except:
             self.qng.Reset()
-            return self.qng.RandBytes(length)
+            return bytes(self.qng.RandBytes(length))
 
     def clear(self):
         self.qng.Clear()
