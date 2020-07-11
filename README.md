@@ -27,7 +27,7 @@ Usage Example
 	http://localhost:62456/api/randnormal
 	< 1.02206840644
 
-	http://localhost:62456/api/randbytes?length=8
+	http://localhost:62456/api/randbytes?length=16
 	< ���E��s_�b����G�
 
 
@@ -43,7 +43,7 @@ Usage Example
 	> RANDNORMAL
 	< -1.6120135370
 
-	> RANDBYTES 16
+	> RANDBYTES 32
 	< �����9L).�!:���@Nh������d����_q�
 
 	> SUBSCRIBEINT32
