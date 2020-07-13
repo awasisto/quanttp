@@ -89,10 +89,8 @@ def handle_ws_message(message, websocket, subscribed):
             websocket.send(str(qng_wrapper.randnormal()))
         elif split_message[0] == 'RANDBYTES':
             length = int(split_message[1])
-            if length < 1:
-                raise Exception('length must be greater than 0')
-            elif length > 8192:
-                raise Exception('length must be less than or equal to 8192')
+            if not 1 <= length <= 8192:
+                raise ValueError()
             qng_wrapper.clear()
             websocket.send(qng_wrapper.randbytes(length))
         elif split_message[0] == 'SUBSCRIBEINT32':
@@ -115,10 +113,8 @@ def handle_ws_message(message, websocket, subscribed):
                     websocket.send(str(qng_wrapper.randnormal()))
         elif split_message[0] == 'SUBSCRIBEBYTES':
             chunk = int(split_message[1])
-            if chunk < 1:
-                raise Exception('chunk must be greater than 0')
-            elif chunk > 8192:
-                raise Exception('chunk must be less than or equal to 8192')
+            if not 1 <= chunk <= 8192:
+                raise ValueError()
             qng_wrapper.clear()
             if not subscribed[0]:
                 subscribed[0] = True
