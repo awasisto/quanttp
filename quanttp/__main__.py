@@ -60,8 +60,6 @@ def api_randbytes():
         length = int(request.args.get('length'))
         if length < 1:
             return Response('length must be greater than 0', status=400, content_type='text/plain')
-        elif length > 8192:
-            return Response('length must be less than or equal to 8192', status=400, content_type='text/plain')
         qng_wrapper.clear()
         return Response(qng_wrapper.randbytes(length), content_type='application/octet-stream')
     except ValueError as e:
@@ -89,7 +87,7 @@ def handle_ws_message(message, websocket, subscribed):
             websocket.send(str(qng_wrapper.randnormal()))
         elif split_message[0] == 'RANDBYTES':
             length = int(split_message[1])
-            if not 1 <= length <= 8192:
+            if length < 1:
                 raise ValueError()
             qng_wrapper.clear()
             websocket.send(qng_wrapper.randbytes(length))
@@ -113,7 +111,7 @@ def handle_ws_message(message, websocket, subscribed):
                     websocket.send(str(qng_wrapper.randnormal()))
         elif split_message[0] == 'SUBSCRIBEBYTES':
             chunk = int(split_message[1])
-            if not 1 <= chunk <= 8192:
+            if chunk < 1:
                 raise ValueError()
             qng_wrapper.clear()
             if not subscribed[0]:

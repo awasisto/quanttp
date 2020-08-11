@@ -49,10 +49,22 @@ class QngWrapper:
 
     def randbytes(self, length):
         try:
-            return bytes(self.qng.RandBytes(length))
+            return self._randbytes_arbitrary_length(length)
         except:
             self.qng.Reset()
+            return self._randbytes_arbitrary_length(length)
+
+    def _randbytes_arbitrary_length(self, length):
+        if length <= 8192:
             return bytes(self.qng.RandBytes(length))
+        else:
+            data = bytearray()
+            for x in range(length // 8192):
+                data.extend(bytearray(self.qng.RandBytes(8192)))
+            bytes_needed = length % 8192
+            if bytes_needed != 0:
+                data.extend(bytearray(self.qng.RandBytes(bytes_needed)))
+            return bytes(data)
 
     def clear(self):
         self.qng.Clear()
