@@ -17,7 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+import os
 import threading
 
 from flask import Flask, request, Response
@@ -25,15 +25,14 @@ from flask_sockets import Sockets
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 
-from quanttp.data.qng_wrapper import QngWrapper
-from quanttp.data.qng_wrapper_mock import QngWrapperMock
+from quanttp.data.qng_wrapper_linux import QngWrapperLinux
+from quanttp.data.qng_wrapper_windows import QngWrapperWindows
 
 
 app = Flask(__name__)
 sockets = Sockets(app)
 
-qng_wrapper = QngWrapper()
-# qng_wrapper = QngWrapperMock()
+qng_wrapper = QngWrapperWindows() if (os.name == 'nt') else QngWrapperLinux()
 
 
 @app.route('/api/randint32')

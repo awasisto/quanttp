@@ -18,12 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import win32com.client
 
-
-class QngWrapper:
+class QngWrapperWindows:
 
     def __init__(self):
+        import win32com.client
         self.qng = win32com.client.Dispatch("QWQNG.QNG")
 
     def randint32(self):
