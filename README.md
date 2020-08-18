@@ -9,8 +9,8 @@ Running
 1. Install ComScire driver from https://comscire.com/downloads/
 2. Run the following commands
    ```
-   pip install -r requirements.txt
-   python -m quanttp
+   pip3 install -r requirements.txt
+   python3 -m quanttp
    ```
 
 Usage Example
