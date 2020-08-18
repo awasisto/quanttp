@@ -18,13 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import platform
 from ctypes import cdll, c_void_p, c_int, c_double, POINTER, c_char
 
 
 class QngWrapperLinux:
 
     def __init__(self):
-        self.libqwqng_wrapper = cdll.LoadLibrary('./libqwqng-wrapper.so')
+        self.libqwqng_wrapper = cdll.LoadLibrary('./libqwqng-wrapper-x86-64.so' if platform.machine().endswith('64') else './libqwqng-wrapper.so')
         self.libqwqng_wrapper.GetQwqngInstance.restype = c_void_p
         self.libqwqng_wrapper.RandInt32.argtypes = [c_void_p]
         self.libqwqng_wrapper.RandInt32.restype = c_int
