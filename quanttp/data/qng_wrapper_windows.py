@@ -23,47 +23,47 @@ class QngWrapperWindows:
 
     def __init__(self):
         import win32com.client
-        self.qng = win32com.client.Dispatch("QWQNG.QNG")
+        self._qng = win32com.client.Dispatch("QWQNG.QNG")
 
     def randint32(self):
         try:
-            return self.qng.RandInt32
+            return self._qng.RandInt32
         except:
-            self.qng.Reset()
-            return self.qng.RandInt32
+            self._qng.Reset()
+            return self._qng.RandInt32
 
     def randuniform(self):
         try:
-            return self.qng.RandUniform
+            return self._qng.RandUniform
         except:
-            self.qng.Reset()
-            return self.qng.RandUniform
+            self._qng.Reset()
+            return self._qng.RandUniform
 
     def randnormal(self):
         try:
-            return self.qng.RandNormal
+            return self._qng.RandNormal
         except:
-            self.qng.Reset()
-            return self.qng.RandNormal
+            self._qng.Reset()
+            return self._qng.RandNormal
 
     def randbytes(self, length):
         try:
             return self._randbytes_arbitrary_length(length)
         except:
-            self.qng.Reset()
+            self._qng.Reset()
             return self._randbytes_arbitrary_length(length)
 
     def _randbytes_arbitrary_length(self, length):
         if length <= 8192:
-            return bytes(self.qng.RandBytes(length))
+            return bytes(self._qng.RandBytes(length))
         else:
             data = bytearray()
             for x in range(length // 8192):
-                data.extend(bytearray(self.qng.RandBytes(8192)))
+                data.extend(bytearray(self._qng.RandBytes(8192)))
             bytes_needed = length % 8192
             if bytes_needed != 0:
-                data.extend(bytearray(self.qng.RandBytes(bytes_needed)))
+                data.extend(bytearray(self._qng.RandBytes(bytes_needed)))
             return bytes(data)
 
     def clear(self):
-        self.qng.Clear()
+        self._qng.Clear()

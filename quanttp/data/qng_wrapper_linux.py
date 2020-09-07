@@ -25,59 +25,59 @@ from ctypes import cdll, c_void_p, c_int, c_double, POINTER, c_char
 class QngWrapperLinux:
 
     def __init__(self):
-        self.qwqng_wrapper = cdll.LoadLibrary('./libqwqng-wrapper-x86-64.so' if platform.machine().endswith('64') else './libqwqng-wrapper.so')
-        self.qwqng_wrapper.GetQwqngInstance.restype = c_void_p
-        self.qwqng_wrapper.RandInt32.argtypes = [c_void_p]
-        self.qwqng_wrapper.RandInt32.restype = c_int
-        self.qwqng_wrapper.RandUniform.argtypes = [c_void_p]
-        self.qwqng_wrapper.RandUniform.restype = c_double
-        self.qwqng_wrapper.RandNormal.argtypes = [c_void_p]
-        self.qwqng_wrapper.RandNormal.restype = c_double
-        self.qwqng_wrapper.RandBytes.argtypes = [c_void_p, c_int]
-        self.qwqng_wrapper.RandBytes.restype = POINTER(c_char)
-        self.qwqng_wrapper.Clear.argtypes = [c_void_p]
-        self.qwqng_wrapper.Reset.argtypes = [c_void_p]
-        self.qng_pointer = self.qwqng_wrapper.GetQwqngInstance()
+        self._qwqng_wrapper = cdll.LoadLibrary('./libqwqng-wrapper-x86-64.so' if platform.machine().endswith('64') else './libqwqng-wrapper.so')
+        self._qwqng_wrapper.GetQwqngInstance.restype = c_void_p
+        self._qwqng_wrapper.RandInt32.argtypes = [c_void_p]
+        self._qwqng_wrapper.RandInt32.restype = c_int
+        self._qwqng_wrapper.RandUniform.argtypes = [c_void_p]
+        self._qwqng_wrapper.RandUniform.restype = c_double
+        self._qwqng_wrapper.RandNormal.argtypes = [c_void_p]
+        self._qwqng_wrapper.RandNormal.restype = c_double
+        self._qwqng_wrapper.RandBytes.argtypes = [c_void_p, c_int]
+        self._qwqng_wrapper.RandBytes.restype = POINTER(c_char)
+        self._qwqng_wrapper.Clear.argtypes = [c_void_p]
+        self._qwqng_wrapper.Reset.argtypes = [c_void_p]
+        self._qng_pointer = self._qwqng_wrapper.GetQwqngInstance()
 
     def randint32(self):
         try:
-            return self.qwqng_wrapper.RandInt32(self.qng_pointer)
+            return self._qwqng_wrapper.RandInt32(self._qng_pointer)
         except:
-            self.qwqng_wrapper.Reset(self.qng_pointer)
-            return self.qwqng_wrapper.RandInt32(self.qng_pointer)
+            self._qwqng_wrapper.Reset(self._qng_pointer)
+            return self._qwqng_wrapper.RandInt32(self._qng_pointer)
 
     def randuniform(self):
         try:
-            return self.qwqng_wrapper.RandUniform(self.qng_pointer)
+            return self._qwqng_wrapper.RandUniform(self._qng_pointer)
         except:
-            self.qwqng_wrapper.Reset(self.qng_pointer)
-            return self.qwqng_wrapper.RandUniform(self.qng_pointer)
+            self._qwqng_wrapper.Reset(self._qng_pointer)
+            return self._qwqng_wrapper.RandUniform(self._qng_pointer)
 
     def randnormal(self):
         try:
-            return self.qwqng_wrapper.RandNormal(self.qng_pointer)
+            return self._qwqng_wrapper.RandNormal(self._qng_pointer)
         except:
-            self.qwqng_wrapper.Reset(self.qng_pointer)
-            return self.qwqng_wrapper.RandNormal(self.qng_pointer)
+            self._qwqng_wrapper.Reset(self._qng_pointer)
+            return self._qwqng_wrapper.RandNormal(self._qng_pointer)
 
     def randbytes(self, length):
         try:
             return self._randbytes_arbitrary_length(length)
         except:
-            self.qwqng_wrapper.Reset(self.qng_pointer)
+            self._qwqng_wrapper.Reset(self._qng_pointer)
             return self._randbytes_arbitrary_length(length)
 
     def _randbytes_arbitrary_length(self, length):
         if length <= 8192:
-            return self.qwqng_wrapper.RandBytes(self.qng_pointer, length)[:length]
+            return self._qwqng_wrapper.RandBytes(self._qng_pointer, length)[:length]
         else:
             data = bytearray()
             for x in range(length // 8192):
-                data.extend(self.qwqng_wrapper.RandBytes(self.qng_pointer, 8192)[:8192])
+                data.extend(self._qwqng_wrapper.RandBytes(self._qng_pointer, 8192)[:8192])
             bytes_needed = length % 8192
             if bytes_needed != 0:
-                data.extend(self.qwqng_wrapper.RandBytes(self.qng_pointer, bytes_needed)[:bytes_needed])
+                data.extend(self._qwqng_wrapper.RandBytes(self._qng_pointer, bytes_needed)[:bytes_needed])
             return bytes(data)
 
     def clear(self):
-        self.qwqng_wrapper.Clear(self.qng_pointer)
+        self._qwqng_wrapper.Clear(self._qng_pointer)
