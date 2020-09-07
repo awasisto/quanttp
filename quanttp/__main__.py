@@ -58,7 +58,7 @@ def randbytes():
         if length < 1:
             return Response('length must be greater than 0', status=400, content_type='text/plain')
         return Response(qng_wrapper.randbytes(length), content_type='application/octet-stream')
-    except ValueError as e:
+    except (TypeError, ValueError) as e:
         return Response(str(e), status=400, content_type='text/plain')
 
 
@@ -117,7 +117,7 @@ def handle_ws_message(message, websocket, subscribed):
             websocket.send('UNSUBSCRIBED')
         elif split_message[0] == 'CLEAR':
             qng_wrapper.clear()
-    except (ValueError, BlockingIOError):
+    except (IndexError, ValueError, BlockingIOError):
         pass
     except Exception as e:
         websocket.close(code=1011, message=str(e))
