@@ -17,6 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 import os
 import threading
 
@@ -36,33 +37,35 @@ qng_wrapper = QngWrapperWindows() if (os.name == 'nt') else QngWrapperLinux()
 
 
 @app.route('/api/randint32')
-def api_randint32():
-    qng_wrapper.clear()
+def randint32():
     return Response(str(qng_wrapper.randint32()), content_type='text/plain')
 
 
 @app.route('/api/randuniform')
-def api_randuniform():
-    qng_wrapper.clear()
+def randuniform():
     return Response(str(qng_wrapper.randuniform()), content_type='text/plain')
 
 
 @app.route('/api/randnormal')
-def api_randnormal():
-    qng_wrapper.clear()
+def randnormal():
     return Response(str(qng_wrapper.randnormal()), content_type='text/plain')
 
 
 @app.route('/api/randbytes')
-def api_randbytes():
+def randbytes():
     try:
         length = int(request.args.get('length'))
         if length < 1:
             return Response('length must be greater than 0', status=400, content_type='text/plain')
-        qng_wrapper.clear()
         return Response(qng_wrapper.randbytes(length), content_type='application/octet-stream')
     except ValueError as e:
         return Response(str(e), status=400, content_type='text/plain')
+
+
+@app.route('/api/clear')
+def clear():
+    qng_wrapper.clear()
+    return Response(status=204)
 
 
 @sockets.route('/ws')
@@ -76,43 +79,35 @@ def handle_ws_message(message, websocket, subscribed):
     try:
         split_message = message.strip().upper().split()
         if split_message[0] == 'RANDINT32':
-            qng_wrapper.clear()
             websocket.send(str(qng_wrapper.randint32()))
         elif split_message[0] == 'RANDUNIFORM':
-            qng_wrapper.clear()
             websocket.send(str(qng_wrapper.randuniform()))
         elif split_message[0] == 'RANDNORMAL':
-            qng_wrapper.clear()
             websocket.send(str(qng_wrapper.randnormal()))
         elif split_message[0] == 'RANDBYTES':
             length = int(split_message[1])
             if length < 1:
                 raise ValueError()
-            qng_wrapper.clear()
             websocket.send(qng_wrapper.randbytes(length))
         elif split_message[0] == 'SUBSCRIBEINT32':
             if not subscribed[0]:
                 subscribed[0] = True
-                qng_wrapper.clear()
                 while subscribed[0] and not websocket.closed:
                     websocket.send(str(qng_wrapper.randint32()))
         elif split_message[0] == 'SUBSCRIBEUNIFORM':
             if not subscribed[0]:
                 subscribed[0] = True
-                qng_wrapper.clear()
                 while subscribed[0] and not websocket.closed:
                     websocket.send(str(qng_wrapper.randuniform()))
         elif split_message[0] == 'SUBSCRIBENORMAL':
             if not subscribed[0]:
                 subscribed[0] = True
-                qng_wrapper.clear()
                 while subscribed[0] and not websocket.closed:
                     websocket.send(str(qng_wrapper.randnormal()))
         elif split_message[0] == 'SUBSCRIBEBYTES':
             chunk = int(split_message[1])
             if chunk < 1:
                 raise ValueError()
-            qng_wrapper.clear()
             if not subscribed[0]:
                 subscribed[0] = True
                 while subscribed[0] and not websocket.closed:
@@ -120,6 +115,8 @@ def handle_ws_message(message, websocket, subscribed):
         elif split_message[0] == 'UNSUBSCRIBE':
             subscribed[0] = False
             websocket.send('UNSUBSCRIBED')
+        elif split_message[0] == 'CLEAR':
+            qng_wrapper.clear()
     except (ValueError, BlockingIOError):
         pass
     except Exception as e:
